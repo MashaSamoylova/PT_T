@@ -28,12 +28,9 @@ class SSH():
 
     def exec(self, command):
         try:
-            stdin, stdout, stderr = self.client.exec_command(command)
+            return self.client.exec_command(command)
         except SSHException:
             raise TransportConnectionError("SSHException")
-
-        print(stdout.read().decode())
-        return [stdin, stdout, stderr]
 
     def get_file(self, path):
         sftp_client = self.client.open_sftp()
