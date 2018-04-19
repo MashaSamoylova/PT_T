@@ -1,5 +1,6 @@
 import paramiko
 import pytest
+import socket
 
 class TransportError(Exception):
     pass
@@ -13,14 +14,20 @@ class SSH():
         self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         try:
             self.client.connect(hostname=host, username=login, password=passwd, port=port_)
-        except:
-            raise TransportConnectionError
+        except 	paramiko.BadHostKeyException:
+            raise TransportConnectionError("BadHostKeyException")
+        except 	paramiko.AuthenticationException:
+            raise TransportConnectionError("AuthenticationException")
+        except paramiko.SSHException:
+            raise TransportConnectionError("SSHException")
+        except socket.error:
+            raise TransportConnectionError("socket.error")
 
     def exec(self, command):
         try:
             stdin, stdout, stderr = self.client.exec_command(command)
-        except:
-            raise TransportConnectionError
+        except SSHException:
+            raise TransportConnectionError("SSHException")
 
         if stderr.read():
             raise TransportError
@@ -31,8 +38,9 @@ class SSH():
         sftp_client = self.client.open_sftp()
         try:
             remote_file = sftp_client.open(path)
-        except:
-            raise TransportError
+        except IOError:
+            raise TransportError("IOError")
+        
         return remote_file.read().decode()
 
 

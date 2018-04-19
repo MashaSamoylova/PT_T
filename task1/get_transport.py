@@ -19,4 +19,5 @@ def test_get_transport():
     with pytest.raises(UnknownTransport):
         get_transport('ssh1', "localhost", 4000, "root", "screencast")
 
-
+if __name__=="__main__":
+    get_transport('ssh', "localhost", 4000, "root", "screencast").get_file("asdf")
