@@ -41,13 +41,10 @@ class SSH():
         
         return remote_file.read().decode()
 
-def get_transportSSH(host, port_, login, passwd):
-    return SSH(host, port_,login, passwd)
-
 def get_transport(transport_name, host, port, login, passwd):
-    transport_names = {'ssh':get_transportSSH}
+    transport_names = {'ssh':SSH}
 
-    if transport_name not in transport_names.keys():
+    if transport_name not in transport_names:
         raise UnknownTransport
 
     return transport_names[transport_name](host,port,login, passwd)
