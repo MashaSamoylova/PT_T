@@ -8,6 +8,9 @@ class TransportError(Exception):
 class TransportConnectionError(Exception):
     pass
 
+class UnknownTransport(Exception):
+    pass
+
 class SSH():
     def __init__(self, host, port_, login, passwd):
         self.client = paramiko.SSHClient()
@@ -41,13 +44,8 @@ class SSH():
         
         return remote_file.read().decode()
 
-
 def get_transportSSH(host, port_, login, passwd):
     return SSH(host, port_,login, passwd)
-
-
-class UnknownTransport(Exception):
-    pass
 
 def get_transport(transport_name, host, port, login, passwd):
     transport_names = {'ssh':get_transportSSH}
