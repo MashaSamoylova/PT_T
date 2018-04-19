@@ -1,5 +1,5 @@
+##!/usr/bin/env python3.5
 import paramiko
-import pytest
 import socket
 
 class TransportError(Exception):
@@ -29,10 +29,8 @@ class SSH():
         except SSHException:
             raise TransportConnectionError("SSHException")
 
-        if stderr.read():
-            raise TransportError
-        
         print(stdout.read().decode())
+        return [stdin, stdout, stderr]
 
     def get_file(self, path):
         sftp_client = self.client.open_sftp()
@@ -47,24 +45,17 @@ class SSH():
 def get_transportSSH(host, port_, login, passwd):
     return SSH(host, port_,login, passwd)
 
-###TESTS###
-def test_init():
-        SSH("localhost", 4000, "root", "screencast")
-        with pytest.raises(TransportConnectionError):
-            SSH("localhost1", 4000, "root", "screencast")
-            SSH("localhost", 40001, "root", "screencast")
-            SSH("localhost", 4000, "root1", "screencast")
-            SSH("localhost", 4000, "root", "screencast1")
 
-def test_exec():
-    SSH("localhost", 4000, "root", "screencast").exec("ls /")
-    with pytest.raises(TransportError):
-        SSH("localhost", 4000, "root", "screencast").exec("asdfafsd")
+class UnknownTransport(Exception):
+    pass
 
+def get_transport(transport_name, host, port, login, passwd):
+    transport_names = {'ssh':get_transportSSH}
 
-def test_get_file():
-    SSH("localhost", 4000, "root", "screencast").get_file("/root/test")
-    with pytest.raises(TransportError):
-        SSH("localhost", 4000, "root", "screencast").get_file("/root/test1")
+    if transport_name not in transport_names.keys():
+        raise UnknownTransport
 
-        
+    return transport_names[transport_name](host,port,login, passwd)
+
+if __name__=="__main__":
+    get_transport('ssh', "localhost", 4000, "root", "screencast").get_file("asdf")
