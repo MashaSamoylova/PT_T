@@ -21,13 +21,26 @@ def main():
 if __name__=="__main__":
     db = get_db()
     c = db.cursor()
-    c.execute('''
+    c.execute(
+            '''
             CREATE TABLE IF NOT EXISTS 
             control(
             id INTEGER PRIMARY KEY,
             description TEXT
             )
-            ''')
+            '''
+    )
+
+    c.execute(
+            '''
+            CREATE TABLE IF NOT EXISTS
+            scandata(
+            id INTEGER PRIMARY KEY,
+            description,
+            status
+            )
+            '''
+    )
     db.commit()
 
     with open("controls.json") as f:
