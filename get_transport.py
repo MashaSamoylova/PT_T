@@ -17,7 +17,7 @@ class UnknownTransport(Exception):
     pass
 
 class SSH():
-    def __init__(self, host, port_, login, passwd):
+    def __init__(self, host=config, port_, login, passwd):
         self.client = paramiko.SSHClient()
         self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         try:
@@ -53,6 +53,7 @@ def get_transport(transport_name, host="", port="",login="", password=""):
     if transport_name not in transport_names:
         raise UnknownTransport
 
+    #FIXME view is suck 
     if not host: host = config['host']
     if not port: port = config[transport_name]['port']
     if not login: login = config[transport_name]['login']
