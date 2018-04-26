@@ -1,6 +1,11 @@
 ##!/usr/bin/env python3.5
 import paramiko
 import socket
+import json
+
+
+with open("env.json") as f:
+    config = json.load(f)
 
 class TransportError(Exception):
     pass
@@ -41,13 +46,21 @@ class SSH():
         
         return remote_file.read().decode()
 
-def get_transport(transport_name, host, port, login, passwd):
-    transport_names = {'ssh':SSH}
-
+def get_transport(transport_name, host="", port="",login="", password=""):
+    transport_names = {'SSH':SSH}
+    
+    transport_name = transport_name.upper()
     if transport_name not in transport_names:
         raise UnknownTransport
 
-    return transport_names[transport_name](host,port,login, passwd)
+    if not host: host = config['host']
+    if not port: port = config[transport_name]['port']
+    if not login: login = config[transport_name]['login']
+    if not password: password = config[transport_name]['password']
+
+    print(login, port,  host, password)
+
+    return transport_names[transport_name](host,port,login, password)
 
 if __name__=="__main__":
-    get_transport('ssh', "localhost", 4000, "root", "screencast").get_file("asdf")
+    get_transport('ssh', "localhost", 4000, "root", "screencast")
