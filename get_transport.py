@@ -7,17 +7,21 @@ import json
 with open("env.json") as f:
     config = json.load(f)
 
+
 class TransportError(Exception):
     pass
 
-class TransportConnectionError(Exception):
+class TransportIOError(TransportError):
     pass
 
-class UnknownTransport(Exception):
+class TransportConnectionError(TransportError):
+    pass
+
+class UnknownTransport(TransportError):
     pass
 
 class SSH():
-    def __init__(self, host=config, port_, login, passwd):
+    def __init__(self, host, port_, login, passwd):
         self.client = paramiko.SSHClient()
         self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         try:
@@ -41,8 +45,10 @@ class SSH():
         sftp_client = self.client.open_sftp()
         try:
             remote_file = sftp_client.open(path)
+        except paramiko.SSHException:
+            raise TransportConnectionError
         except IOError:
-            raise TransportError("IOError")
+            raise TransportIOError("IOError")
         
         return remote_file.read().decode()
 
@@ -58,8 +64,6 @@ def get_transport(transport_name, host="", port="",login="", password=""):
     if not port: port = config[transport_name]['port']
     if not login: login = config[transport_name]['login']
     if not password: password = config[transport_name]['password']
-
-    print(login, port,  host, password)
 
     return transport_names[transport_name](host,port,login, password)
 
