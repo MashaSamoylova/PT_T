@@ -1,12 +1,10 @@
-##!/usr/bin/env python3.5
+#!/usr/bin/env python3.5
 import paramiko
 import socket
 import json
 
-
-with open("env.json") as f:
+with open("./env.json") as f:
     config = json.load(f)
-
 
 class TransportError(Exception):
     pass
@@ -59,13 +57,9 @@ def get_transport(transport_name, host="", port="",login="", password=""):
     if transport_name not in transport_names:
         raise UnknownTransport
 
-    #FIXME view is suck 
     if not host: host = config['host']
-    if not port: port = config[transport_name]['port']
-    if not login: login = config[transport_name]['login']
-    if not password: password = config[transport_name]['password']
+    if not port: port = config['transports'][transport_name]['port']
+    if not login: login = config['transports'][transport_name]['login']
+    if not password: password = config['transports'][transport_name]['password']
 
     return transport_names[transport_name](host,port,login, password)
-
-if __name__=="__main__":
-    get_transport('ssh', "localhost", 4000, "root", "screencast")
