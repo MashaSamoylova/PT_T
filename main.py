@@ -4,9 +4,7 @@ import json
 import importlib
 
 from db_manager import *
-
-def check_executable_python(file_name):
-    return file_name.split(".")[-1:][0]=="py"
+import scripts
 
 def add_control(control_id, status):
     statuses = dict(enumerate(
@@ -26,8 +24,6 @@ def add_control(control_id, status):
 
     comp_data = c.fetchone()
 
-    print(comp_data)
-
     c.execute('''
             INSERT INTO scandata(id, description, status) 
             VALUES(?,?,?)
@@ -38,9 +34,10 @@ def add_control(control_id, status):
     db.close()
 
 def main():
-    for f in filter(check_executable_python, os.listdir("./scripts")):
-        mod = importlib.import_module("scripts." + f[:-3])
-        add_control(456, mod.main())
+    for module_name in os.listdir("./scripts"):
+        if module_name.endswith('.py'):
+            module = importlib.import_module('.' + module_name[:-3], package='scripts')
+            add_control(456, module.main())
 
 if __name__=="__main__":
     prepare_db()
