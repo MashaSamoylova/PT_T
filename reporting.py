@@ -2,6 +2,7 @@ import time
 import collections
 
 from db_manager import *
+from get_transport import config
 
 def make_report(scan_time):
     db = get_db()
@@ -35,6 +36,10 @@ def make_report(scan_time):
     print("STATUS_ERROR: {}".format(statuses["STATUS_ERROR"]))
     print("STATUS_EXCEPTION: {}".format(statuses["STATUS_EXCEPTION"]))
 
+    transports = list(config['transports'].keys())
+
+    print("host: {}".format(config['host']))
+    for transport in transports:
+        print("Transport: {}, port: {}, login: {}".format(transport, config['transports'][transport]['port'], config['transports'][transport]['login']))
     
 
-                
