@@ -16,8 +16,7 @@ def prepare_db():
             id INTEGER PRIMARY KEY,
             description TEXT
             )
-            '''
-    )
+            ''')
 
     c.execute(
             '''
@@ -27,8 +26,8 @@ def prepare_db():
             description,
             status
             )
-            '''
-    )
+            ''')
+
     db.commit()
 
     with open("controls.json") as f:

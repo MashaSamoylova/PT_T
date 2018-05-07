@@ -4,11 +4,12 @@ import json
 import importlib
 
 from db_manager import *
+from reporting import *
 import scripts
 
 def add_control(control_id, status):
-    statuses = dict(enumerate(
-        ["STATUS_COMPLIANT",
+    statuses = dict(enumerate([
+        "STATUS_COMPLIANT",
         "STATUS_NOT_COMPLIANT",
         "STATUS_NOT_APPLICABLE",
         "STATUS_ERROR",
@@ -18,27 +19,31 @@ def add_control(control_id, status):
     db = get_db()
     c = db.cursor()
 
-    c.execute('''
+    c.execute(
+            '''
             SELECT * FROM control WHERE id=?
             ''', (str(control_id),))
 
     comp_data = c.fetchone()
 
-    c.execute('''
+    c.execute(
+            '''
             INSERT INTO scandata(id, description, status) 
             VALUES(?,?,?)
-            ''', 
-            tuple(list(comp_data) + [statuses[status]])
+            ''', tuple(list(comp_data) + [statuses[status]])
     )
     db.commit()
     db.close()
 
 def main():
+    counter = 0
+    prepare_db()
     for module_name in os.listdir("./scripts"):
         if module_name.endswith('.py'):
             module = importlib.import_module('.' + module_name[:-3], package='scripts')
-            add_control(456, module.main())
+            add_control(counter, module.main())
+            counter = counter + 1
+    make_report()
 
 if __name__=="__main__":
-    prepare_db()
     main()
