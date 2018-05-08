@@ -22,16 +22,9 @@ def add_control(control_id, status):
 
     c.execute(
             '''
-            SELECT * FROM control WHERE id=?
-            ''', (str(control_id),))
-
-    comp_data = c.fetchone()
-
-    c.execute(
-            '''
-            INSERT INTO scandata(id, description, status) 
-            VALUES(?,?,?)
-            ''', tuple(list(comp_data) + [statuses[status]])
+            INSERT INTO scandata(id,status) 
+            VALUES(?,?)
+            ''', (control_id, statuses[status])
     )
     db.commit()
     db.close()

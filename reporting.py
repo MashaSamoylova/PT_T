@@ -27,7 +27,7 @@ def make_report(scan_time):
             STATUS_EXCEPTION=0
             )
     for report in scan_information:
-        counter[report[2]] += 1
+        counter[report[1]] += 1
 
     statuses = dict(counter)
     print("STATUS_COMPLIANT: {}".format(statuses["STATUS_COMPLIANT"]))

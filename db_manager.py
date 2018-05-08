@@ -14,6 +14,8 @@ def prepare_db():
             CREATE TABLE IF NOT EXISTS 
             control(
             id INTEGER PRIMARY KEY,
+            title TEXT,
+            requirements TEXT,
             description TEXT
             )
             ''')
@@ -23,8 +25,7 @@ def prepare_db():
             CREATE TABLE IF NOT EXISTS
             scandata(
             id INTEGER PRIMARY KEY,
-            description,
-            status
+            status TEXT
             )
             ''')
 
