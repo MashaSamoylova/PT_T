@@ -4,8 +4,8 @@ from collections import Counter
 from jinja2 import Environment, PackageLoader, FileSystemLoader, select_autoescape
 from weasyprint import HTML, CSS
 
+from config import *
 from db_manager import *
-from config import config
 
 def make_report(scan_time):
     db = get_db()

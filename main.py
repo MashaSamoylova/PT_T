@@ -3,9 +3,10 @@ import os
 import time
 import importlib
 
+import scripts
 from db_manager import *
 from reporting import *
-import scripts
+from config import statuses
 
 def add_control(control_id, status):
     db = get_db()
@@ -15,8 +16,8 @@ def add_control(control_id, status):
             '''
             INSERT INTO scandata(id,status) 
             VALUES(?,?)
-            ''', (control_id, statuses[status])
-    )
+            ''', 
+            (control_id, statuses[status]))
     db.commit()
     db.close()
 

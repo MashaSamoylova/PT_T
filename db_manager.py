@@ -3,14 +3,6 @@ import json
 
 DBNAME = "data.db"
 
-statuses = dict(enumerate([
-    "STATUS_COMPLIANT",
-    "STATUS_NOT_COMPLIANT",
-    "STATUS_NOT_APPLICABLE",
-    "STATUS_ERROR",
-    "STATUS_EXCEPTION"]
-    ,1))
-
 def get_db():
     return sqlite3.connect(DBNAME)
 
