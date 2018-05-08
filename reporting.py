@@ -7,14 +7,16 @@ from get_transport import config
 def make_report(scan_time):
     db = get_db()
     c = db.cursor()
-
+    
     c.execute(
             '''
-            SELECT * FROM scandata
+            SELECT * FROM scandata AS t1
+            INNER JOIN control AS t2
+            ON t1.id=t2.id
             ''')
 
     scan_information = c.fetchall()
-    
+    print(scan_information)
     print("DATE: {}".format(time.asctime()))
     print("duration: {} sec".format(scan_time))
     print("number of checks: {}".format(len(scan_information)))
@@ -27,11 +29,13 @@ def make_report(scan_time):
             STATUS_EXCEPTION=0
             )
 
-    controls_id = []
+    system_information = []
     for report in scan_information:
         counter[report[1]] += 1
-        controls_id.append(report[0])
-
+        system_information.append("Transport: {}, port: {}, login: {}".format(
+            report[6], 
+            config['transports'][report[6]]['port'], 
+            config['transports'][report[6]]['login']))
 
     statuses = dict(counter)
     print("STATUS_COMPLIANT: {}".format(statuses["STATUS_COMPLIANT"]))
@@ -40,27 +44,16 @@ def make_report(scan_time):
     print("STATUS_ERROR: {}".format(statuses["STATUS_ERROR"]))
     print("STATUS_EXCEPTION: {}".format(statuses["STATUS_EXCEPTION"]))
 
-    c.execute(
-            '''
-            SELECT * FROM control
-            WHERE id in 
-            ''' + str(tuple(controls_id)))
-
     print("host: {}".format(config['host']))
-    control_information = c.fetchall()
-    system_information = []
-    for control_inf in control_information:
-        system_information.append("Transport: {}, port: {}, login: {}".format(control_inf[4], config['transports'][control_inf[4]]['port'], config['transports'][control_inf[4]]['login']))
 
-    system_information = set(system_information)
     print("SYSTEM_INFORMATION:")
-    print(system_information)
+    print(set(system_information))
 
-    for control_inf in control_information:
-        print("ID: {}".format(control_inf[0]))
-        print("Title: {}".format(control_inf[1]))
-        print("Requirements: {}".format(control_inf[2]))
-        print("Description: {}".format(control_inf[3]))
+    for report in scan_information:
+        print("ID: {}".format(report[2]))
+        print("Title: {}".format(report[3]))
+        print("Requirements: {}".format(report[4]))
+        print("Description: {}".format(report[5]))
 
 
 
