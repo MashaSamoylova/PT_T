@@ -22,59 +22,32 @@ def make_report(scan_time):
             INNER JOIN control AS t2
             ON t1.id=t2.id
             ''')
+
+    scan_date = time.asctime()
     columns_names = [n[0] for n in c.description]
     scan_information = [dict(zip(columns_names, comp)) for comp in c.fetchall()]
 
-    scan_date = time.asctime()
-
-    counter = Counter({status:0 for status in statuses.values()})
-    
     used_transports = set([report['transport'] for report in scan_information])
     transports = {transport : config['transports'][transport] for transport in used_transports}
 
+    counter = Counter({status:0 for status in statuses.values()})
     for report in scan_information:
         counter[report["status"]] += 1
 
-    scan_statuses = dict(counter)
+    scan_statuses = {key+"_checks": value for key, value in dict(counter).items()}
+    print(scan_statuses)
 
-    report_template = env.get_template("index.html").render(
-        scan_date=scan_date,
-        scan_time=scan_time,
-        system_host=config['host'],
-        transports=transports,
-        total_checks=len(scan_information),
-        STATUS_COMPLIANT_checks=scan_statuses["STATUS_COMPLIANT"],
-        STATUS_NOT_COMPLIANT_checks=scan_statuses["STATUS_NOT_COMPLIANT"],
-        STATUS_NOT_APPLICABLE_checks=scan_statuses["STATUS_NOT_APPLICABLE"],
-        STATUS_ERROR_checks=scan_statuses["STATUS_ERROR"],
-        STATUS_EXCEPTION_checks=scan_statuses["STATUS_EXCEPTION"],
-        comp_data=scan_information
-        )
-    
+    render_data = {
+        'scan_date': scan_date,
+        'scan_time': scan_time,
+        'system_host': config['host'],
+        'transports' : transports,
+        'total_checks': len(scan_information),
+        'comp_data' : scan_information
+    }
+
+    render_data.update(scan_statuses)
+
+    report_template = env.get_template('index.html').render(**render_data)
     styles = [CSS(filename='./templates/style.css')]
     HTML(string = report_template).write_pdf('sample_report.pdf', stylesheets=styles)  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
