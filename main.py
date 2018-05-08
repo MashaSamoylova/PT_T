@@ -8,15 +8,15 @@ from db_manager import *
 from reporting import *
 import scripts
 
-def add_control(control_id, status):
-    statuses = dict(enumerate([
-        "STATUS_COMPLIANT",
-        "STATUS_NOT_COMPLIANT",
-        "STATUS_NOT_APPLICABLE",
-        "STATUS_ERROR",
-        "STATUS_EXCEPTION"]
-        ,1))
+statuses = dict(enumerate([
+    "STATUS_COMPLIANT",
+    "STATUS_NOT_COMPLIANT",
+    "STATUS_NOT_APPLICABLE",
+    "STATUS_ERROR",
+    "STATUS_EXCEPTION"]
+    ,1))
 
+def add_control(control_id, status):
     db = get_db()
     c = db.cursor()
 
