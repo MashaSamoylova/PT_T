@@ -26,8 +26,12 @@ def make_report(scan_time):
             STATUS_ERROR=0,
             STATUS_EXCEPTION=0
             )
+
+    controls_id = []
     for report in scan_information:
         counter[report[1]] += 1
+        controls_id.append(report[0])
+
 
     statuses = dict(counter)
     print("STATUS_COMPLIANT: {}".format(statuses["STATUS_COMPLIANT"]))
@@ -36,10 +40,52 @@ def make_report(scan_time):
     print("STATUS_ERROR: {}".format(statuses["STATUS_ERROR"]))
     print("STATUS_EXCEPTION: {}".format(statuses["STATUS_EXCEPTION"]))
 
-    transports = list(config['transports'].keys())
+    c.execute(
+            '''
+            SELECT * FROM control
+            WHERE id in 
+            ''' + str(tuple(controls_id)))
 
     print("host: {}".format(config['host']))
-    for transport in transports:
-        print("Transport: {}, port: {}, login: {}".format(transport, config['transports'][transport]['port'], config['transports'][transport]['login']))
-    
+    control_information = c.fetchall()
+    system_information = []
+    for control_inf in control_information:
+        system_information.append("Transport: {}, port: {}, login: {}".format(control_inf[4], config['transports'][control_inf[4]]['port'], config['transports'][control_inf[4]]['login']))
+
+    system_information = set(system_information)
+    print("SYSTEM_INFORMATION:")
+    print(system_information)
+
+    for control_inf in control_information:
+        print("ID: {}".format(control_inf[0]))
+        print("Title: {}".format(control_inf[1]))
+        print("Requirements: {}".format(control_inf[2]))
+        print("Description: {}".format(control_inf[3]))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

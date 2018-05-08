@@ -16,7 +16,8 @@ def prepare_db():
             id INTEGER PRIMARY KEY,
             title TEXT,
             requirements TEXT,
-            description TEXT
+            description TEXT,
+            transport TEXT
             )
             ''')
 
@@ -37,11 +38,16 @@ def prepare_db():
     for complaint_record in controls:
         c.execute(
             '''
-            INSERT INTO control(id, description)
-            VALUES (?,?)
+            INSERT INTO control(id, title, requirements, description, transport)
+            VALUES (?,?,?,?,?)
             ''', 
-            tuple(complaint_record))
-        
+            (
+                complaint_record["id"],
+                complaint_record["title"],
+                complaint_record["requirements"],
+                complaint_record["description"],
+                complaint_record["transport"],
+            ))
         db.commit()
     db.close()
 

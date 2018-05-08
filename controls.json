@@ -1,4 +1,16 @@
 [
-  ["0","File named 'testfile' is present in the root folder on target system."],
-  ["1","some other control"]
+    {
+        "id":0, 
+        "title": "some title", 
+        "requirements": "some requirements", 
+        "description": "File named 'testfile' is present in the root folder on target system.",
+        "transport": "SSH"
+    },
+    {
+        "id":1, 
+        "title": "some title", 
+        "requirements": "some requirements", 
+        "description": "File named 'testfile' is present in the root folder on target system.",
+        "transport": "SSH"
+    }
 ]

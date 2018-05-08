@@ -30,8 +30,8 @@ def add_control(control_id, status):
     db.close()
 
 def main():
-    counter = 0
     prepare_db()
+    counter = 0
     begin_time = time.time()
     for module_name in os.listdir("./scripts"):
         if module_name.endswith('.py'):
