@@ -1,10 +1,8 @@
 #!/usr/bin/env python3.5
 import paramiko
 import socket
-import json
 
-with open("./env.json") as f:
-    config = json.load(f)
+from config import config
 
 class TransportError(Exception):
     pass

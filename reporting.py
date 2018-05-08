@@ -5,17 +5,11 @@ from jinja2 import Environment, PackageLoader, FileSystemLoader, select_autoesca
 from weasyprint import HTML, CSS
 
 from db_manager import *
-from get_transport import config
-
-env = Environment(
-    loader=FileSystemLoader('templates'),
-    autoescape=select_autoescape(['html', 'xml'])
-)
+from config import config
 
 def make_report(scan_time):
     db = get_db()
     c = db.cursor()
-    
     c.execute(
             '''
             SELECT * FROM scandata AS t1
@@ -35,7 +29,6 @@ def make_report(scan_time):
         counter[report["status"]] += 1
 
     scan_statuses = {key+"_checks": value for key, value in dict(counter).items()}
-    print(scan_statuses)
 
     render_data = {
         'scan_date': scan_date,
@@ -45,9 +38,12 @@ def make_report(scan_time):
         'total_checks': len(scan_information),
         'comp_data' : scan_information
     }
-
     render_data.update(scan_statuses)
 
+    env = Environment(
+        loader=FileSystemLoader('templates'),
+        autoescape=select_autoescape(['html', 'xml'])
+    )
     report_template = env.get_template('index.html').render(**render_data)
     styles = [CSS(filename='./templates/style.css')]
     HTML(string = report_template).write_pdf('sample_report.pdf', stylesheets=styles)  

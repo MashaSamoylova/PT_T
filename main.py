@@ -1,20 +1,11 @@
 #!/usr/bin/env python3.5
 import os
 import time
-import json
 import importlib
 
 from db_manager import *
 from reporting import *
 import scripts
-
-statuses = dict(enumerate([
-    "STATUS_COMPLIANT",
-    "STATUS_NOT_COMPLIANT",
-    "STATUS_NOT_APPLICABLE",
-    "STATUS_ERROR",
-    "STATUS_EXCEPTION"]
-    ,1))
 
 def add_control(control_id, status):
     db = get_db()
