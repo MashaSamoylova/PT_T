@@ -17,6 +17,9 @@ class TransportConnectionError(TransportError):
 class UnknownTransport(TransportError):
     pass
 
+class MySQLError(TransportError):
+    pass
+
 class SSH():
     def __init__(self, host, port_, login, passwd):
         self.client = paramiko.SSHClient()
@@ -51,21 +54,32 @@ class SSH():
 
 class SQL():
     def __init__(self, host, port, login, passwd):
-        self.connection = pymysql.connect(
-                host=host,
-                user=login,
-                port=port,
-                password=passwd,
-                db='sadb',
-                charset='utf8', #TODO native encoding
-                cursorclass=pymysql.cursors.DictCursor,
-                unix_socket=False
-        )
+        try:
+            self.connection = pymysql.connect(
+                    host=host,
+                    user=login,
+                    port=port,
+                    password=passwd,
+                    db='sadb', #TODO with this something
+                    charset='utf8', #TODO native encoding
+                    cursorclass=pymysql.cursors.DictCursor,
+                    unix_socket=False
+            )
+        except pymysql.err.OperationalError:
+            raise TransportConnectionError
 
     def exec(self, command):
-        with self.connection.cursor() as cursor:
-            cursor.execute(command)
-            result = cursor.fetchall()
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute(command)
+                result = cursor.fetchall()
+        except pymysql.err.OperationalError:
+            raise TransportConnectionError
+        except pymysql.err.ProgrammingError:
+            raise MySQLError
+        except pymysql.err.InternalError:
+            raise MySQLError
+
         self.connection.commit()
         return result
 
