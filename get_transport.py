@@ -64,6 +64,9 @@ class SSH():
 
         return remote_file.read().decode()
 
+    def __del__(self):
+        self.client.close()
+
 
 class SQL():
     def __init__(self, host, port, login, passwd):
@@ -95,6 +98,9 @@ class SQL():
 
         self.connection.commit()
         return result
+
+    def __del__(self):
+        self.connection.close()
 
 
 def get_transport(transport_name, host="", port="", login="", password=""):
