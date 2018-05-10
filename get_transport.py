@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.5
 import paramiko
+import pymysql
 import socket
 
 from config import config
@@ -48,8 +49,28 @@ class SSH():
         
         return remote_file.read().decode()
 
+class SQL():
+    def __init__(self, host, port, login, passwd):
+        self.connection = pymysql.connect(
+                host=host,
+                user=login,
+                port=port,
+                password=passwd,
+                db='sadb',
+                charset='utf8', #TODO native encoding
+                cursorclass=pymysql.cursors.DictCursor,
+                unix_socket=False
+        )
+
+    def exec(self, command):
+        with self.connection.cursor() as cursor:
+            cursor.execute(command)
+            result = cursor.fetchall()
+        self.connection.commit()
+        return result
+
 def get_transport(transport_name, host="", port="",login="", password=""):
-    transport_names = {'SSH':SSH}
+    transport_names = {'SSH':SSH, 'SQL':SQL}
     
     transport_name = transport_name.upper()
     if transport_name not in transport_names:
