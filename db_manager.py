@@ -38,7 +38,13 @@ def prepare_db():
     for complaint_record in controls:
         c.execute(
             '''
-            INSERT INTO control(id, title, requirements, description, transport)
+            INSERT INTO control(
+                id, 
+                title, 
+                requirements, 
+                description, 
+                transport
+            )
             VALUES (?,?,?,?,?)
             ''', 
             (
