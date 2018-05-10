@@ -3,15 +3,17 @@ import json
 
 DBNAME = "data.db"
 
+
 def get_db():
     return sqlite3.connect(DBNAME)
+
 
 def prepare_db():
     db = get_db()
     c = db.cursor()
     c.execute(
             '''
-            CREATE TABLE IF NOT EXISTS 
+            CREATE TABLE IF NOT EXISTS
             control(
             id INTEGER PRIMARY KEY,
             title TEXT,
@@ -39,14 +41,14 @@ def prepare_db():
         c.execute(
             '''
             INSERT INTO control(
-                id, 
-                title, 
-                requirements, 
-                description, 
+                id,
+                title,
+                requirements,
+                description,
                 transport
             )
             VALUES (?,?,?,?,?)
-            ''', 
+            ''',
             (
                 complaint_record["id"],
                 complaint_record["title"],
@@ -56,4 +58,3 @@ def prepare_db():
             ))
         db.commit()
     db.close()
-

@@ -8,5 +8,4 @@ statuses = dict(enumerate([
     "STATUS_NOT_COMPLIANT",
     "STATUS_NOT_APPLICABLE",
     "STATUS_ERROR",
-    "STATUS_EXCEPTION"]
-    ,1))
+    "STATUS_EXCEPTION"], 1))

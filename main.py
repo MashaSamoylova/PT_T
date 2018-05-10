@@ -3,12 +3,12 @@ import os
 import time
 import importlib
 
-import scripts
 from db_manager import *
 from reporting import *
 from config import statuses
 
 from get_transport import *
+
 
 def add_control(control_id, status):
     db = get_db()
@@ -16,9 +16,9 @@ def add_control(control_id, status):
 
     c.execute(
             '''
-            INSERT INTO scandata(id,status) 
+            INSERT INTO scandata(id,status)
             VALUES(?,?)
-            ''', 
+            ''',
             (control_id, statuses[status]))
     db.commit()
     db.close()
@@ -34,7 +34,7 @@ def main():
             counter = counter + 1
     make_report(time.time()-begin_time)
 
-if __name__=="__main__":
+if __name__ == "__main__":
     print(get_transport("SSH").exec("ls /"))
     print(get_transport("SQL").exec("SELECT `id`, `password` FROM `users` WHERE `email`='webmaster@python.org'"))
 

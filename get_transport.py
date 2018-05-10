@@ -5,20 +5,26 @@ import socket
 
 from config import config
 
+
 class TransportError(Exception):
     pass
+
 
 class TransportIOError(TransportError):
     pass
 
+
 class TransportConnectionError(TransportError):
     pass
+
 
 class UnknownTransport(TransportError):
     pass
 
+
 class MySQLError(TransportError):
     pass
+
 
 class SSH():
     def __init__(self, host, port, login, passwd):
@@ -26,14 +32,14 @@ class SSH():
         self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         try:
             self.client.connect(
-                    hostname=host, 
-                    username=login, 
-                    password=passwd, 
+                    hostname=host,
+                    username=login,
+                    password=passwd,
                     port=port
             )
-        except 	paramiko.BadHostKeyException:
+        except paramiko.BadHostKeyException:
             raise TransportConnectionError("BadHostKeyException")
-        except 	paramiko.AuthenticationException:
+        except paramiko.AuthenticationException:
             raise TransportConnectionError("AuthenticationException")
         except paramiko.SSHException:
             raise TransportConnectionError("SSHException")
@@ -44,7 +50,7 @@ class SSH():
         try:
             stdin, stdout, stderr = self.client.exec_command(command)
             return stdout.read()
-        except SSHException:
+        except paramiko.SSHException:
             raise TransportConnectionError("SSHException")
 
     def get_file(self, path):
@@ -55,8 +61,9 @@ class SSH():
             raise TransportConnectionError
         except IOError:
             raise TransportIOError("IOError")
-        
+
         return remote_file.read().decode()
+
 
 class SQL():
     def __init__(self, host, port, login, passwd):
@@ -66,8 +73,8 @@ class SQL():
                     user=login,
                     port=port,
                     password=passwd,
-                    db='sadb', #TODO with this something
-                    charset='utf8', #TODO native encoding
+                    db='sadb',  # TODO with this something
+                    charset='utf8',  # TODO native encoding
                     cursorclass=pymysql.cursors.DictCursor,
                     unix_socket=False
             )
@@ -89,20 +96,21 @@ class SQL():
         self.connection.commit()
         return result
 
-def get_transport(transport_name, host="", port="",login="", password=""):
-    transport_names = {'SSH':SSH, 'SQL':SQL}
-    
+
+def get_transport(transport_name, host="", port="", login="", password=""):
+    transport_names = {'SSH': SSH, 'SQL': SQL}
+
     transport_name = transport_name.upper()
     if transport_name not in transport_names:
         raise UnknownTransport
 
-    if not host: 
+    if not host:
         host = config['host']
-    if not port: 
+    if not port:
         port = config['transports'][transport_name]['port']
-    if not login: 
+    if not login:
         login = config['transports'][transport_name]['login']
-    if not password: 
+    if not password:
         password = config['transports'][transport_name]['password']
 
-    return transport_names[transport_name](host,port,login, password)
+    return transport_names[transport_name](host, port, login, password)
