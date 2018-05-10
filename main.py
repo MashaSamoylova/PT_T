@@ -35,6 +35,7 @@ def main():
     make_report(time.time()-begin_time)
 
 if __name__=="__main__":
-    print(get_transport("SQL").exec("SELECT `id`, `password` FROM `users` WHERE `email`=`webmaster@python.org`"))
+    print(get_transport("SSH").exec("ls /"))
+    print(get_transport("SQL").exec("SELECT `id`, `password` FROM `users` WHERE `email`='webmaster@python.org'"))
 
    # main()

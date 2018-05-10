@@ -37,7 +37,8 @@ class SSH():
 
     def exec(self, command):
         try:
-            return self.client.exec_command(command)
+            stdin, stdout, stderr = self.client.exec_command(command)
+            return stdout.read()
         except SSHException:
             raise TransportConnectionError("SSHException")
 
